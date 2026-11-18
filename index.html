@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>God</title>
+<style>
+  :root { color-scheme: dark; --bg: #0a0b0d; --panel: #13151a; --line: #23262e; --text: #eceef2; --dim: #9097a3; --accent: #7cc4ff; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 12vh 24px 96px; }
+  h1 { font-size: 64px; line-height: 1; letter-spacing: -0.03em; margin: 0 0 16px; font-weight: 650; }
+  .lede { font-size: 20px; color: var(--dim); margin: 0 0 48px; max-width: 34em; }
+  .cmd { display: flex; align-items: stretch; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .cmd code { flex: 1; padding: 18px 20px; font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; overflow-x: auto; }
+  .cmd code::before { content: "$ "; color: var(--dim); }
+  .cmd button { border: 0; border-left: 1px solid var(--line); background: transparent; color: var(--accent); font: inherit; font-size: 14px; padding: 0 20px; cursor: pointer; min-width: 84px; }
+  .cmd button:hover { background: #1a1d24; }
+  .cmd button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .note { color: var(--dim); font-size: 14px; margin: 12px 2px 0; }
+  h2 { font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); font-weight: 600; margin: 64px 0 16px; }
+  ol, ul { margin: 0; padding-left: 22px; }
+  li { margin: 8px 0; }
+  li span { color: var(--dim); }
+  a { color: var(--accent); }
+  footer { margin-top: 72px; color: var(--dim); font-size: 13px; border-top: 1px solid var(--line); padding-top: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>God</h1>
+  <p class="lede">An assistant for each person on the team. It runs on your own Mac, keeps your memory there, and works for you alone.</p>
+
+  <div class="cmd">
+    <code id="cmd">curl -fsSL https://god.invertix.ai/install.sh | bash</code>
+    <button id="copy" type="button" aria-label="Copy the install command">Copy</button>
+  </div>
+  <p class="note">Paste it into the Terminal app on your Mac. It takes about ten minutes.</p>
+
+  <h2>What it does</h2>
+  <ol>
+    <li>Signs you in to GitHub. <span>The code is in the team's private repository; only members can fetch it.</span></li>
+    <li>Fetches the code into a folder named <code>god</code> in your home folder.</li>
+    <li>Asks your name, work mail, what you do, and your mobile number if you want to text it.</li>
+    <li>Sets it up on your Mac and starts it. <span>You click through a Google sign-in and two macOS permission prompts.</span></li>
+  </ol>
+
+  <h2>Who can install it</h2>
+  <ul>
+    <li>Members of the team's GitHub organisation. <span>Anyone else is told so and nothing is installed.</span></li>
+    <li>This page and the install command hold no key, no code and nobody's data. <span>You can <a href="install.sh">read the script</a> before you run it.</span></li>
+  </ul>
+
+  <h2>What you need</h2>
+  <ul>
+    <li>A Mac, with <a href="https://brew.sh" rel="noreferrer">Homebrew</a> installed.</li>
+    <li>A GitHub account that your team lead has added to the organisation.</li>
+  </ul>
+
+  <footer>Your mail, calendar and files stay on your Mac. To stop it later, run <code>~/god/stop.sh</code>.</footer>
+</main>
+<script>
+  const btn = document.getElementById("copy"), cmd = document.getElementById("cmd");
+  // The command names the address this page was opened at, so it is right on every address the page is served from.
+  if (location.protocol === "https:") cmd.textContent = `curl -fsSL ${new URL("install.sh", location.href).href} | bash`;
+  btn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(cmd.textContent); btn.textContent = "Copied"; }
+    catch { const r = document.createRange(); r.selectNodeContents(cmd); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected"; }
+    setTimeout(() => { btn.textContent = "Copy"; }, 1600);
+  });
+</script>
+</body>
+</html>
