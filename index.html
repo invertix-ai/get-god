@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#cfe9ff">
 <title>God</title>
 <style>
-  :root { --ink: #1f2430; --dim: #5b6577; --body: #e87031; --gold: #f5c542; --sky1: #bfe2ff; --sky2: #e6f4ff; --card: #14171f; }
+  :root { --ink: #1f2430; --dim: #3d4658; --body: #e87031; --gold: #f5c542; --sky1: #bfe2ff; --sky2: #e6f4ff; --card: #14171f; }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body { margin: 0; color: var(--ink); font: 17px/1.5 ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -25,6 +25,7 @@
   .c4 { width: 130px; height: 36px; top: 78%; left: -160px; animation-duration: 82s; animation-delay: -12s; opacity: .6; }
   @keyframes drift { to { transform: translateX(calc(100vw + 340px)); } }
 
+  .stage:focus-visible { outline: 3px solid var(--gold); outline-offset: 8px; border-radius: 24px; }
   .stage { position: relative; width: min(46vh, 340px, 78vw); aspect-ratio: 1; margin-bottom: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .glow { position: absolute; inset: -16%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,240,190,.95), rgba(255,240,190,0) 72%); animation: breathe 5s ease-in-out infinite; }
   .agent { position: absolute; inset: 0; animation: float 4.6s ease-in-out infinite; }
@@ -50,7 +51,7 @@
   .cmd { display: flex; align-items: stretch; width: min(640px, 100%); background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: 0 14px 40px rgba(40,70,110,.22); }
   .cmd code { flex: 1; padding: 17px 18px; font: 14.5px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #f4f6fa; white-space: nowrap; overflow-x: auto; text-align: left; scrollbar-width: none; }
   .cmd code::before { content: "$ "; color: #8b93a5; }
-  .cmd button { border: 0; background: var(--body); color: #fff; font: inherit; font-weight: 700; padding: 0 22px; cursor: pointer; min-width: 96px; }
+  .cmd button { border: 0; background: var(--body); color: #1a1208; font: inherit; font-weight: 700; padding: 0 22px; cursor: pointer; min-width: 96px; }
   .cmd button:hover { background: #f08040; }
   .cmd button:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
   .fine { margin: 14px 0 0; color: var(--dim); font-size: 13.5px; }
@@ -62,7 +63,7 @@
 <body>
 <div class="cloud c1" aria-hidden="true"></div><div class="cloud c2" aria-hidden="true"></div><div class="cloud c3" aria-hidden="true"></div><div class="cloud c4" aria-hidden="true"></div>
 <main>
-  <div class="stage" id="stage" role="img" aria-label="The Invertix agent, with a halo">
+  <div class="stage" id="stage" role="button" tabindex="0" aria-label="The Invertix agent, with a halo. Press for another line.">
     <div class="glow"></div>
     <div class="shadow"></div>
     <div class="agent">
@@ -80,7 +81,7 @@
       </svg>
     </div>
   </div>
-  <p class="say" id="say" aria-live="polite">hi. be not afraid :)</p>
+  <p class="say" id="say">hi. be not afraid :)</p>
   <h1>God</h1>
   <p class="lede">Your own assistant. It lives on your Mac, remembers everything for you, and works for you alone.</p>
   <div class="cmd">
@@ -104,7 +105,9 @@
   const LINES = ["hi. be not afraid :)", "I read your mail so you don't have to", "I never sleep. it's fine, really", "ask me anything, any time", "I only work for you", "one line in the terminal and I'm yours"];
   let n = 0;
   const next = () => { n = (n + 1) % LINES.length; say.textContent = LINES[n]; };
-  stage.addEventListener("click", () => { next(); if (still) return; stage.classList.remove("hop"); void stage.offsetWidth; stage.classList.add("hop"); });
+  const poke = () => { next(); if (still) return; stage.classList.remove("hop"); void stage.offsetWidth; stage.classList.add("hop"); };
+  stage.addEventListener("click", poke);
+  stage.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); poke(); } });
   if (!still) setInterval(next, 5200);
   // The command names the address this page was opened at, so it is right wherever the page is served from.
   const btn = document.getElementById("copy"), cmd = document.getElementById("cmd");
