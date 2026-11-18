@@ -4,7 +4,10 @@
 # organisation; then it runs that repository's own setup on your Mac.
 #   curl -fsSL https://god.invertix.ai/install.sh | bash
 set -euo pipefail
-REPO="${GOD_REPO:-invertix-ai/god}"
+# Everything is inside one function that is called on the last line: a download cut short runs nothing at all.
+main() {
+# The repository is fixed on purpose: nobody can be talked into pointing this at another one.
+REPO="invertix-ai/god"
 DEST="${GOD_DIR:-$HOME/god}"
 say() { printf '\n== %s\n' "$1"; }
 stop() { printf '\n%s\n' "$1" >&2; exit 1; }
@@ -12,7 +15,7 @@ stop() { printf '\n%s\n' "$1" >&2; exit 1; }
 [ "$(uname)" = "Darwin" ] || stop "God runs on a Mac. This is not one."
 # Piped from curl, this script is the standard input: questions are asked on the terminal itself.
 [ -r /dev/tty ] || stop "Run this in a terminal window: it has a few questions for you."
-ask() { local a; printf '%s ' "$1" > /dev/tty; IFS= read -r a < /dev/tty; printf '%s' "$a"; }
+ask() { local a=""; printf '%s ' "$1" > /dev/tty; IFS= read -r a < /dev/tty || true; printf '%s' "$a"; }
 
 say "1/4 Tools"
 command -v brew >/dev/null 2>&1 || stop "Install Homebrew first (https://brew.sh), then run this again."
@@ -42,6 +45,7 @@ echo "   in $DEST"
 
 say "4/4 You"
 # Each answer can also be given beforehand (GOD_NAME, GOD_EMAIL, GOD_ABOUT, GOD_PHONE); what is not given is asked.
+# GOD_PHONE set to nothing means "no number, do not ask": that is why it alone is read with - and not :-.
 NAME="${GOD_NAME:-$(ask 'Your full name:')}"
 EMAIL="${GOD_EMAIL:-$(ask 'Your work mail address:')}"
 ABOUT="${GOD_ABOUT:-$(ask 'What you do, in one line:')}"
@@ -51,3 +55,5 @@ ARGS=(--name "$NAME" --email "$EMAIL" --about "$ABOUT")
 [ -n "$PHONE" ] && ARGS+=(--phone "$PHONE")
 if [ "${GOD_INSTALL_DRY:-}" = "1" ]; then printf '\nWould now run: %s/setup.sh' "$DEST"; printf ' %q' "${ARGS[@]}"; printf '\n'; exit 0; fi
 exec bash "$DEST/setup.sh" "${ARGS[@]}" < /dev/tty
+}
+main "$@"
